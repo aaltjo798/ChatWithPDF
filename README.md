@@ -1,4 +1,7 @@
 # Chat with PDF
+![Screenshot 2025-04-04 143321](https://github.com/user-attachments/assets/d6a9aa78-a424-4d55-b2c3-8ddf2f4a8581)
+![Screenshot 2025-04-05 140133](https://github.com/user-attachments/assets/881cb978-ac48-4109-9f65-1bb92ee4d2fa)
+
 
 A powerful web application that allows you to upload PDF documents and chat with them using AI. Built with Flask and powered by Ollama, this application provides an intuitive interface for interacting with PDF content through natural language conversations.
 
