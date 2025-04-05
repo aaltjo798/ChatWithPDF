@@ -123,6 +123,32 @@ def clear_chat_history(pdf_name):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/delete-pdf/<pdf_name>', methods=['POST'])
+def delete_pdf(pdf_name):
+    """
+    Delete a PDF and its associated chat history.
+    
+    Args:
+        pdf_name: Name of the PDF file
+        
+    Returns:
+        JSON: Success message or error message if something goes wrong
+    """
+    try:
+        # Delete the PDF file
+        pdf_path = os.path.join(app.config['UPLOAD_FOLDER'], pdf_name)
+        if os.path.exists(pdf_path):
+            os.remove(pdf_path)
+            
+        # Delete associated chat history
+        history_file = get_chat_history_file(pdf_name)
+        if os.path.exists(history_file):
+            os.remove(history_file)
+            
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     """
