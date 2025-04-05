@@ -38,7 +38,7 @@ A powerful web application that allows you to upload PDF documents and chat with
 
 1. Clone the repository (if using Git):
    ```bash
-   git clone https://github.com/yourusername/ChatWithPDF.git
+   git clone https://github.com/aaltjo798/ChatWithPDF.git
    cd ChatWithPDF
    ```
 
