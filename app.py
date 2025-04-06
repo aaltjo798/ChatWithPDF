@@ -14,7 +14,7 @@ Dependencies:
 - Ollama: AI model integration
 """
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_from_directory, url_for
 from werkzeug.utils import secure_filename
 import os
 import json
@@ -57,7 +57,18 @@ def extract_text_from_pdf(file):
     reader = PyPDF2.PdfReader(file)
     text = ""
     for page in reader.pages:
-        text += page.extract_text()
+        try:
+            page_text = page.extract_text()
+            if page_text:
+                # Handle potential encoding issues
+                try:
+                    text += page_text
+                except UnicodeDecodeError:
+                    # If there's a decode error, try to encode and decode with different encodings
+                    text += page_text.encode('utf-8', errors='ignore').decode('utf-8')
+        except Exception as e:
+            print(f"Error extracting text from page: {str(e)}")
+            continue
     return text
 
 def get_chat_history_file(pdf_name):
@@ -72,17 +83,25 @@ def get_chat_history_file(pdf_name):
     """
     return os.path.join(app.config['CHAT_HISTORY_FOLDER'], f"{pdf_name}_history.json")
 
+@app.route('/pdf/<filename>')
+def serve_pdf(filename):
+    """Serve PDF files from the pdf_vault directory."""
+    try:
+        return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 404
+
 @app.route('/')
 def index():
-    """
-    Render the main page of the application.
-    
-    Returns:
-        HTML: Rendered template with list of processed PDFs
-    """
-    # Get list of processed PDFs from the upload folder
-    pdfs = [f for f in os.listdir(app.config['UPLOAD_FOLDER']) if f.endswith('.json')]
-    return render_template('index.html', pdfs=pdfs)
+    """Render the main page with a list of available PDFs."""
+    pdf_files = []
+    for filename in os.listdir(app.config['UPLOAD_FOLDER']):
+        if filename.endswith('.pdf'):
+            pdf_files.append({
+                'name': filename,
+                'url': url_for('serve_pdf', filename=filename)
+            })
+    return render_template('index.html', pdf_files=pdf_files)
 
 @app.route('/chat-history/<pdf_name>')
 def get_chat_history(pdf_name):
@@ -159,9 +178,10 @@ def upload_file():
         
     Process:
         1. Validate the uploaded file
-        2. Extract text from PDF
-        3. Split text into chunks for better processing
-        4. Save chunks to JSON file
+        2. Save the PDF file
+        3. Extract text from PDF
+        4. Split text into chunks for better processing
+        5. Save chunks to JSON file
     """
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'}), 400
@@ -172,6 +192,11 @@ def upload_file():
     
     if file and file.filename.endswith('.pdf'):
         try:
+            # Save the PDF file
+            pdf_filename = secure_filename(file.filename)
+            pdf_filepath = os.path.join(app.config['UPLOAD_FOLDER'], pdf_filename)
+            file.save(pdf_filepath)
+            
             # Extract text from PDF
             text = extract_text_from_pdf(file)
             
@@ -183,21 +208,19 @@ def upload_file():
             text_chunks = text_splitter.split_text(text)
             
             # Save processed chunks to JSON file
-            filename = secure_filename(file.filename.replace('.pdf', '.json'))
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            with open(filepath, 'w') as f:
+            json_filename = secure_filename(file.filename.replace('.pdf', '.json'))
+            json_filepath = os.path.join(app.config['UPLOAD_FOLDER'], json_filename)
+            with open(json_filepath, 'w') as f:
                 json.dump(text_chunks, f)
             
             return jsonify({
                 'success': True,
-                'message': f'PDF uploaded with {len(text_chunks)} chunks',
-                'filename': filename
+                'chunks': len(text_chunks)
             })
-            
         except Exception as e:
             return jsonify({'error': str(e)}), 500
-    
-    return jsonify({'error': 'Invalid file type'}), 400
+    else:
+        return jsonify({'error': 'Invalid file type. Please upload a PDF file.'}), 400
 
 @app.route('/chat', methods=['POST'])
 def chat():
@@ -205,7 +228,7 @@ def chat():
     Handle chat interactions with the PDF content using Ollama AI.
     
     Process:
-        1. Load the relevant PDF content
+        1. Load the relevant PDF content from JSON
         2. Prepare context from the PDF
         3. Load chat history
         4. Generate AI response
@@ -227,13 +250,13 @@ def chat():
         if not pdf_name or not message:
             return jsonify({'error': 'Missing required fields'}), 400
 
-        # Load the PDF data
-        pdf_path = os.path.join(app.config['UPLOAD_FOLDER'], pdf_name)
-        if not os.path.exists(pdf_path):
-            return jsonify({'error': 'PDF not found'}), 404
+        # Load the processed PDF data from JSON
+        json_path = os.path.join(app.config['UPLOAD_FOLDER'], pdf_name.replace('.pdf', '.json'))
+        if not os.path.exists(json_path):
+            return jsonify({'error': 'Processed PDF data not found'}), 404
 
         # Load PDF chunks
-        with open(pdf_path, 'r') as f:
+        with open(json_path, 'r') as f:
             text_chunks = json.load(f)
         
         # Prepare context from first 5 chunks
