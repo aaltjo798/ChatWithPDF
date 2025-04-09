@@ -100,9 +100,10 @@
             width: 50%;
             height: 100vh;
             overflow: hidden;
-            background: white;
+            background: #ffffff;
             opacity: 0;
-            transition: opacity 0.5s ease;
+            transition: all 0.3s ease;
+            border-left: 1px solid rgba(0, 0, 0, 0.1);
         }
         .pdf-container.visible {
             opacity: 1;
@@ -111,12 +112,12 @@
             width: 50%;
             height: 100vh;
             overflow: hidden;
-            background: rgba(255, 255, 255, 0.9);
+            background: white;
             backdrop-filter: blur(10px);
             box-shadow: -10px 0 20px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
-            transition: all 0.5s ease;
+            transition: all 0.5s ease, background-color 0.3s ease;
         }
         .chat-container.fullscreen {
             position: absolute;
@@ -181,9 +182,11 @@
             background: rgba(10, 10, 10, 0.9);
         }
         .dark .pdf-container {
-            background: rgba(10, 10, 10, 0.9);
+            background: #1a1a1a;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
         }
         .dark #pdf-viewer {
+            background: #1a1a1a;
             filter: invert(90%) hue-rotate(180deg);
         }
         .dark .bg-white {
@@ -282,6 +285,7 @@
             width: 100%;
             height: 100%;
             border: none;
+            background: #ffffff;
         }
         .split-screen {
             display: flex;
@@ -299,20 +303,28 @@
             overflow: hidden;
         }
 
-        /* PDF name truncation */
+        /* PDF list item styles */
         .pdf-link {
-            max-width: 250px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            display: inline-block;
+            max-width: 250px; /* Adjust based on sidebar width */
         }
+        
         .pdf-name {
-            max-width: 200px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            display: inline-block;
+            display: block;
+        }
+        
+        /* Dark mode styles for PDF list */
+        .dark .pdf-link {
+            color: #e5e7eb;
+        }
+        
+        .dark .pdf-link:hover {
+            background-color: rgba(75, 85, 99, 0.5);
         }
     </style>
 </head>
@@ -375,7 +387,7 @@
                         <div class="flex items-center justify-between group">
                             <a href="#" class="pdf-link flex-grow p-2 rounded-lg hover:bg-gray-100 transition-colors" 
                                data-pdf-url="{{ pdf.url }}" data-pdf-name="{{ pdf.name }}">
-                                <span class="text-gray-700">{{ pdf.name }}</span>
+                                <span class="pdf-name text-gray-700 dark:text-gray-300">{{ pdf.name }}</span>
                             </a>
                             <button class="delete-pdf-btn opacity-0 group-hover:opacity-100 p-2 text-red-500 hover:text-red-700 transition-opacity"
                                     data-pdf-name="{{ pdf.name }}">

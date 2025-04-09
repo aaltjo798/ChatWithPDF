@@ -1,0 +1,7 @@
+[33m86ee794[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m deleted pdf and json files that where useless
+[33m2af0d5b[m made a pdf viewer next to the chat and added animations to it. aslo fixed the delete pdf button
+[33mc3acd9b[m Merge branch 'main' of https://github.com/aaltjo798/ChatWithPDF
+[33m7bcd6bf[m feat: Add PDF deletion and enhance UI
+[33m52489da[m Update README.md
+[33m4b8cb67[m Update README.md
+[33mf19b079[m[33m ([m[1;32mmaster[m[33m)[m initial commit

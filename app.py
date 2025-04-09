@@ -159,6 +159,12 @@ def delete_pdf(pdf_name):
         if os.path.exists(pdf_path):
             os.remove(pdf_path)
             
+        # Delete the associated JSON file
+        json_filename = pdf_name.replace('.pdf', '.json')
+        json_path = os.path.join(app.config['UPLOAD_FOLDER'], json_filename)
+        if os.path.exists(json_path):
+            os.remove(json_path)
+            
         # Delete associated chat history
         history_file = get_chat_history_file(pdf_name)
         if os.path.exists(history_file):
