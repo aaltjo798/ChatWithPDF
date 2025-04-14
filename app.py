@@ -145,27 +145,31 @@ def clear_chat_history(pdf_name):
 @app.route('/delete-pdf/<pdf_name>', methods=['POST'])
 def delete_pdf(pdf_name):
     """
-    Delete a PDF and its associated chat history.
+    Delete a PDF and its associated JSON file.
     
     Args:
-        pdf_name: Name of the PDF file
+        pdf_name: Name of the PDF file to delete
         
     Returns:
-        JSON: Success message or error message if something goes wrong
+        JSON response indicating success or failure
     """
     try:
         # Delete the PDF file
         pdf_path = os.path.join(app.config['UPLOAD_FOLDER'], pdf_name)
         if os.path.exists(pdf_path):
             os.remove(pdf_path)
-            
-        # Delete associated chat history
-        history_file = get_chat_history_file(pdf_name)
-        if os.path.exists(history_file):
-            os.remove(history_file)
-            
+            print(f"Deleted PDF file: {pdf_path}")
+        
+        # Delete the associated JSON file
+        json_filename = pdf_name.replace('.pdf', '.json')
+        json_path = os.path.join(app.config['UPLOAD_FOLDER'], json_filename)
+        if os.path.exists(json_path):
+            os.remove(json_path)
+            print(f"Deleted JSON file: {json_path}")
+        
         return jsonify({'success': True})
     except Exception as e:
+        print(f"Error deleting files: {e}")
         return jsonify({'error': str(e)}), 500
 
 @app.route('/upload', methods=['POST'])
