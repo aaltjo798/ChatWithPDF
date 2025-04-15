@@ -167,6 +167,12 @@ def delete_pdf(pdf_name):
             os.remove(json_path)
             print(f"Deleted JSON file: {json_path}")
         
+        # Delete the associated chat history file
+        history_file = get_chat_history_file(pdf_name)
+        if os.path.exists(history_file):
+            os.remove(history_file)
+            print(f"Deleted chat history file: {history_file}")
+        
         return jsonify({'success': True})
     except Exception as e:
         print(f"Error deleting files: {e}")
