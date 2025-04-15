@@ -1,0 +1,36 @@
+[1mdiff --cc app.py[m
+[1mindex bdd0fe7,2d2616f..0000000[m
+[1m--- a/app.py[m
+[1m+++ b/app.py[m
+[36m@@@ -158,18 -158,20 +158,31 @@@[m [mdef delete_pdf(pdf_name)[m
+          pdf_path = os.path.join(app.config['UPLOAD_FOLDER'], pdf_name)[m
+          if os.path.exists(pdf_path):[m
+              os.remove(pdf_path)[m
+[32m++<<<<<<< HEAD[m
+[32m +            print(f"Deleted PDF file: {pdf_path}")[m
+[32m +        [m
+[32m++=======[m
+[32m+             [m
+[32m++>>>>>>> 05301df1bc6e66a3a3f347fc3bc7e66286a13a25[m
+          # Delete the associated JSON file[m
+          json_filename = pdf_name.replace('.pdf', '.json')[m
+          json_path = os.path.join(app.config['UPLOAD_FOLDER'], json_filename)[m
+          if os.path.exists(json_path):[m
+              os.remove(json_path)[m
+[32m++<<<<<<< HEAD[m
+[32m +            print(f"Deleted JSON file: {json_path}")[m
+[32m +        [m
+[32m++=======[m
+[32m+             [m
+[32m+         # Delete associated chat history[m
+[32m+         history_file = get_chat_history_file(pdf_name)[m
+[32m+         if os.path.exists(history_file):[m
+[32m+             os.remove(history_file)[m
+[32m+             [m
+[32m++>>>>>>> 05301df1bc6e66a3a3f347fc3bc7e66286a13a25[m
+          return jsonify({'success': True})[m
+      except Exception as e:[m
+[32m +        print(f"Error deleting files: {e}")[m
+          return jsonify({'error': str(e)}), 500[m
+  [m
+  @app.route('/upload', methods=['POST'])[m
