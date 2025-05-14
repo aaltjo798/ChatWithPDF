@@ -351,6 +351,61 @@ def get_models():
         print(f"Error fetching models: {e}")
         return jsonify([])
 
+# Add new route for getting annotations
+@app.route('/annotations/<pdf_name>')
+def get_annotations(pdf_name):
+    """
+    Retrieve saved annotations for a specific PDF.
+    
+    Args:
+        pdf_name: Name of the PDF file
+        
+    Returns:
+        JSON: Array of annotation objects or empty array if none exist
+    """
+    try:
+        annotations_file = os.path.join(app.config['UPLOAD_FOLDER'], f"{pdf_name.replace('.pdf', '')}_annotations.json")
+        if os.path.exists(annotations_file):
+            with open(annotations_file, 'r') as f:
+                return jsonify(json.load(f))
+        return jsonify([])
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Add new route for saving annotations
+@app.route('/annotations/<pdf_name>', methods=['POST'])
+def save_annotations(pdf_name):
+    """
+    Save annotations for a specific PDF.
+    
+    Args:
+        pdf_name: Name of the PDF file
+        
+    Body:
+        JSON array of annotation objects containing:
+        - id: Unique identifier for the annotation
+        - text: Highlighted text
+        - page: Page number
+        - position: Position coordinates on the page
+        - color: Highlight color
+        - created: Timestamp when created
+        
+    Returns:
+        JSON: Success message or error message
+    """
+    try:
+        data = request.get_json()
+        if not isinstance(data, list):
+            return jsonify({'error': 'Invalid data format. Expected JSON array.'}), 400
+            
+        annotations_file = os.path.join(app.config['UPLOAD_FOLDER'], f"{pdf_name.replace('.pdf', '')}_annotations.json")
+        with open(annotations_file, 'w') as f:
+            json.dump(data, f)
+            
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
     try:
         # Ensure all required directories exist
