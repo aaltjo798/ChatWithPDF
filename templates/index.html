@@ -25,7 +25,7 @@
             padding: 0;
             overflow: hidden;
             background-color: #f8fafc;
-            background-image: 
+            background-image:
                 radial-gradient(at 40% 20%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
                 radial-gradient(at 80% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
                 radial-gradient(at 0% 50%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
@@ -166,7 +166,7 @@
         .dark body {
             background-color: #1a1a1a;
             color: #ffffff;
-            background-image: 
+            background-image:
                 radial-gradient(at 40% 20%, rgba(59, 130, 246, 0.05) 0px, transparent 50%),
                 radial-gradient(at 80% 0%, rgba(59, 130, 246, 0.05) 0px, transparent 50%),
                 radial-gradient(at 0% 50%, rgba(59, 130, 246, 0.05) 0px, transparent 50%),
@@ -391,70 +391,79 @@
         .dark #chatMessages {
             scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.05);
         }
+
+        /* --- REVISED CSS FOR TRUNCATION (Simplifed) --- */
+        /* Apply overflow properties directly to the flex-grow link element */
+        .pdf-link {
+            /* flex-grow: 1;    <-- Already applied by Tailwind class 'flex-grow' */
+            /* flex-shrink: 1;  <-- Default for flex items is 1, but explicitly adding for clarity */
+            /* flex-basis: auto; <-- Default for flex items is auto */
+            min-width: 0;        /* Crucial for flex item to truly shrink */
+            overflow: hidden;    /* Hides content that exceeds its bounds */
+            white-space: nowrap; /* Keeps text on a single line */
+            text-overflow: ellipsis; /* Adds the "..." for overflow */
+            /* The p-2 and rounded-lg classes from Tailwind already exist */
+            /* The hover:bg-gray-100 transition-colors also exists */
+        }
+        /* No need for a separate .pdf-name-display span style or class on the span itself */
+        /* --- END REVISED CSS --- */
     </style>
 </head>
 <body class="bg-gray-50">
     <div class="app-container">
-        <!-- Sidebar -->
         <div class="sidebar bg-white shadow-lg">
             <div class="left-side-content">
                 <div class="flex justify-between items-center mb-6">
                     <h1 class="text-xl font-semibold text-gray-800 dark:text-white">Chat with PDF</h1>
                     <div class="flex items-center space-x-4">
-                        <!-- Settings Dropdown -->
                         <div class="relative">
-                            <button onclick="toggleSettings()" 
+                            <button onclick="toggleSettings()"
                                     class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                 <svg class="w-5 h-5 text-gray-800 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                 </svg>
                             </button>
-                            <div id="settingsDropdown" 
+                            <div id="settingsDropdown"
                                  class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
                                 <div class="px-4 py-2">
                                     <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Select LLM Model</label>
-                                    <select id="modelSelector" 
+                                    <select id="modelSelector"
                                             class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:text-white">
                                         <option value="">Loading models...</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
-                        <!-- Theme Toggle -->
-                        <button onclick="toggleTheme()" 
+                        <button onclick="toggleTheme()"
                                 class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                            <!-- Sun icon -->
                             <svg class="w-5 h-5 text-gray-800 dark:text-white hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
                             </svg>
-                            <!-- Moon icon -->
                             <svg class="w-5 h-5 text-gray-800 dark:text-white block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
                             </svg>
                         </button>
                     </div>
                 </div>
-                
-                <!-- Upload Form -->
+
                 <div class="mb-6">
                     <label class="upload-button block w-full px-4 py-3 text-white rounded-lg cursor-pointer transition-colors text-center">
                         Upload PDF
                         <input type="file" class="hidden" accept=".pdf" onchange="uploadPDF(this)">
                     </label>
                 </div>
-                
-                <!-- PDF List -->
+
                 <div class="mt-6">
                     <h2 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Your PDFs</h2>
                     <div id="pdfList" class="space-y-1">
                         {% for pdf in pdf_files %}
                         <div class="flex items-center justify-between group">
-                            <a href="#" class="pdf-link flex-grow p-2 rounded-lg hover:bg-gray-100 transition-colors" 
+                            <a href="#" class="pdf-link flex-grow p-2 rounded-lg hover:bg-gray-100 transition-colors dark:hover:bg-gray-700"
                                data-pdf-url="{{ pdf.url }}" data-pdf-name="{{ pdf.name }}">
-                                <span class="text-gray-700">{{ pdf.name }}</span>
+                                <span class="text-gray-700 dark:text-white" title="{{ pdf.name }}">{{ pdf.name }}</span>
                             </a>
-                            <button class="delete-pdf-btn opacity-0 group-hover:opacity-100 p-2 text-red-500 hover:text-red-700 transition-opacity"
+                            <button class="delete-pdf-btn opacity-0 group-hover:opacity-100 p-2 text-red-500 hover:text-red-700 transition-opacity dark:hover:text-red-400"
                                     data-pdf-name="{{ pdf.name }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
@@ -467,47 +476,41 @@
             </div>
         </div>
 
-        <!-- Main Content Area -->
         <div class="main-content">
-            <!-- PDF Viewer -->
             <div class="pdf-container">
                 <div id="pdf-viewer"></div>
             </div>
 
-            <!-- Chat Container -->
             <div class="chat-container fullscreen">
-                <!-- Selected PDF indicator -->
-                <div id="selectedPDF" class="px-6 py-4 border-b text-sm text-gray-500 bg-white flex items-center space-x-2 h-[72px]">
-                    <svg class="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div id="selectedPDF" class="px-6 py-4 border-b text-sm text-gray-500 bg-white dark:bg-gray-800 dark:border-gray-700 flex items-center space-x-2 h-[72px]">
+                    <svg class="w-10 h-10 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                     </svg>
-                    <span class="font-medium text-gray-700"></span>
+                    <span class="font-medium text-gray-700 dark:text-white"></span>
                 </div>
-                
-                <!-- Chat Messages -->
+
                 <div id="chatMessages" class="space-y-4 flex-1 overflow-y-auto p-6">
                     <div class="text-center text-gray-500 text-sm">
                         Select a PDF to start chatting
                     </div>
                 </div>
 
-                <!-- Input Area -->
-                <div class="border-t p-6 bg-white">
+                <div class="border-t p-6 bg-white dark:bg-gray-800 dark:border-gray-700">
                     <div class="flex items-center space-x-4">
-                        <button onclick="clearChatHistory()" 
+                        <button onclick="clearChatHistory()"
                                 id="clearHistoryBtn"
-                                class="px-4 py-2 text-sm text-red-600 bg-red-50 rounded-lg hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                                class="px-4 py-2 text-sm text-red-600 bg-red-50 rounded-lg hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-red-400"
                                 disabled>
                             Clear History
                         </button>
-                        <input type="text" 
+                        <input type="text"
                                id="messageInput"
-                               class="flex-1 rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:border-blue-500"
+                               class="flex-1 rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                                placeholder="Type your message..."
                                disabled>
                         <button onclick="sendMessage()"
                                 id="sendButton"
-                                class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-blue-700 dark:hover:bg-blue-600"
                                 disabled>
                             Send
                         </button>
@@ -528,10 +531,10 @@
             try {
                 const response = await fetch('/models');
                 const models = await response.json();
-                
+
                 const modelSelector = document.getElementById('modelSelector');
                 modelSelector.innerHTML = '';
-                
+
                 models.forEach(model => {
                     const option = document.createElement('option');
                     option.value = model;
@@ -554,7 +557,7 @@
             const dropdown = document.getElementById('settingsDropdown');
             const settingsButton = event.target.closest('button');
             const modelSelector = document.getElementById('modelSelector');
-            
+
             if (!settingsButton && !event.target.closest('#settingsDropdown') && settingsOpen) {
                 dropdown.classList.add('hidden');
                 settingsOpen = false;
@@ -579,7 +582,7 @@
                     body: formData
                 });
                 const data = await response.json();
-                
+
                 if (data.success) {
                     window.location.reload();
                 } else {
@@ -594,10 +597,10 @@
             try {
                 const response = await fetch(`/chat-history/${pdfName}`);
                 const history = await response.json();
-                
+
                 const chatMessages = document.getElementById('chatMessages');
                 chatMessages.innerHTML = '';
-                
+
                 history.forEach(msg => {
                     addMessage(
                         msg.role === 'user' ? 'You' : 'Assistant',
@@ -611,7 +614,7 @@
 
         async function clearChatHistory() {
             if (!currentPDF) return;
-            
+
             if (!confirm('Are you sure you want to clear the chat history?')) {
                 return;
             }
@@ -620,7 +623,7 @@
                 const response = await fetch(`/clear-history/${currentPDF}`, {
                     method: 'POST'
                 });
-                
+
                 if (response.ok) {
                     const chatMessages = document.getElementById('chatMessages');
                     chatMessages.innerHTML = '';
@@ -635,19 +638,25 @@
 
         function selectPDF(pdfName) {
             currentPDF = pdfName;
-            document.getElementById('selectedPDF').querySelector('span').textContent = pdfName;
+            // When selecting a PDF, display its full name in the "Selected PDF" section
+            // We retrieve the original name from the 'title' attribute of the .pdf-link
+            const selectedPdfLink = document.querySelector(`.pdf-link[data-pdf-name="${pdfName}"]`);
+            const originalName = selectedPdfLink ? selectedPdfLink.querySelector('span').getAttribute('title') : pdfName;
+            document.getElementById('selectedPDF').querySelector('span').textContent = originalName;
+
+
             document.getElementById('messageInput').disabled = false;
             document.getElementById('sendButton').disabled = false;
             document.getElementById('clearHistoryBtn').disabled = false;
             loadChatHistory(pdfName);
-            
+
             // Animate the chat container from fullscreen to split-screen
             const chatContainer = document.querySelector('.chat-container');
             const pdfContainer = document.querySelector('.pdf-container');
-            
+
             // Remove fullscreen class to trigger animation
             chatContainer.classList.remove('fullscreen');
-            
+
             // Show the PDF container with a slight delay for a smoother animation
             setTimeout(() => {
                 pdfContainer.classList.add('visible');
@@ -692,12 +701,12 @@
                         model: document.getElementById('modelSelector').value
                     })
                 });
-                
+
                 const data = await response.json();
-                
+
                 // Remove loading animation
                 loadingDiv.remove();
-                
+
                 if (data.response) {
                     addMessage('Assistant', data.response);
                 } else {
@@ -741,6 +750,7 @@
                 localStorage.theme = 'light'
             } else {
                 document.documentElement.classList.add('dark')
+                localStorage.documentElement.classList.add('dark')
                 localStorage.theme = 'dark'
             }
         }
@@ -754,7 +764,7 @@
                 const response = await fetch(`/delete-pdf/${pdfName}`, {
                     method: 'POST'
                 });
-                
+
                 if (response.ok) {
                     // If the deleted PDF was selected, clear the selection
                     if (currentPDF === pdfName) {
@@ -779,40 +789,40 @@
         async function loadPDF(pdfUrl) {
             const viewer = document.getElementById('pdf-viewer');
             viewer.innerHTML = ''; // Clear previous content
-            
+
             try {
                 const loadingTask = pdfjsLib.getDocument(pdfUrl);
                 const pdf = await loadingTask.promise;
-                
+
                 // Create a container for all pages
                 const container = document.createElement('div');
                 container.className = 'pdf-pages';
                 viewer.appendChild(container);
-                
+
                 // Get container width to calculate scale
                 const containerWidth = viewer.clientWidth;
-                
+
                 // Render each page
                 for (let i = 1; i <= pdf.numPages; i++) {
                     const page = await pdf.getPage(i);
                     const viewport = page.getViewport({ scale: 1.0 });
-                    
+
                     // Calculate scale to fit container width
                     const scale = (containerWidth - 40) / viewport.width; // 40px for padding
                     const scaledViewport = page.getViewport({ scale });
-                    
+
                     const canvas = document.createElement('canvas');
                     const context = canvas.getContext('2d');
                     canvas.height = scaledViewport.height;
                     canvas.width = scaledViewport.width;
-                    
+
                     const renderContext = {
                         canvasContext: context,
                         viewport: scaledViewport
                     };
-                    
+
                     await page.render(renderContext).promise;
-                    
+
                     const pageDiv = document.createElement('div');
                     pageDiv.className = 'pdf-page';
                     pageDiv.appendChild(canvas);
@@ -851,4 +861,4 @@
         });
     </script>
 </body>
-</html> 
+</html>
